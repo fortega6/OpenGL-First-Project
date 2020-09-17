@@ -122,6 +122,10 @@ int main(void)
 		return -1;
 	}
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
@@ -143,6 +147,10 @@ int main(void)
 		0, 1, 2,   // first triangle
 		2, 3, 0    // second triangle
 	};
+
+	unsigned int vao; // vertex array object
+	GLCALL(glGenVertexArrays(1, &vao));
+	GLCALL(glBindVertexArray(vao));
 
 	unsigned int buffer;
 	GLCALL(glGenBuffers(1, &buffer));
@@ -166,6 +174,12 @@ int main(void)
 	glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f);
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	// Unbind
+	GLCALL(glBindVertexArray(0));
+	GLCALL(glUseProgram(0));
+	GLCALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
 	float r = 0.0f;
 	float increment = 0.05f;
 	/* Loop until the user closes the window */
@@ -174,7 +188,15 @@ int main(void)
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		GLCALL(glUseProgram(shader));
 		glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+
+		/*GLCALL(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+		GLCALL(glEnableVertexAttribArray(0));
+		GLCALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));*/
+		GLCALL(glBindVertexArray(vao));
+		GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
 		GLCALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 		if (r > 1.0f)
