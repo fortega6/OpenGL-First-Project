@@ -13,6 +13,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 
 int main(void)
@@ -47,11 +48,11 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
 
-		float positions[8] = {
-			-0.5f, -0.5f, // 0 bottom left
-			 0.5f, -0.5f, // 1 bottom right
-			 0.5f,  0.5f, // 2 top right
-			-0.5f,  0.5f  // 3 top left
+		float positions[] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, // 0 bottom left
+			 0.5f, -0.5f, 1.0f, 0.0f, // 1 bottom right
+			 0.5f,  0.5f, 1.0f, 1.0f, // 2 top right
+			-0.5f,  0.5f, 0.0f, 1.0f // 3 top left
 		};
 
 		unsigned int indices[] = {  // note that we start from 0!
@@ -59,14 +60,18 @@ int main(void)
 			2, 3, 0    // second triangle
 		};
 
+		GLCALL(glEnable(GL_BLEND));
+		GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
 		unsigned int vao; // vertex array object
 		GLCALL(glGenVertexArrays(1, &vao));
 		GLCALL(glBindVertexArray(vao));
 
 		VertexArray va;
-		VertexBuffer vb(positions, 8 * sizeof(float));
+		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
 		VertexBufferLayout layout;
+		layout.Push<float>(2);
 		layout.Push<float>(2);
 		va.AddBuffer(vb, layout);
 
@@ -78,6 +83,10 @@ int main(void)
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+
+		Texture texture("res/textures/wall.jpg");
+		texture.Bind();
+		shader.SetUniform1i("u_Texture", 0);
 
 		// Unbind
 		va.Unbind();		// GLCALL(glBindVertexArray(0));

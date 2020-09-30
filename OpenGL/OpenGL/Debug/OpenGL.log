@@ -1,8 +1,2 @@
 ﻿  Application.cpp
-  IndexBuffer.cpp
-  Renderer.cpp
-  Shader.cpp
-  VertexArray.cpp
-  VertexBuffer.cpp
-  Generating Code...
   OpenGL.vcxproj -> C:\dev\Youtube\OpenGL First Project\OpenGL\Debug\OpenGL.exe

@@ -101,6 +101,11 @@ void Shader::Unbind() const
 	GLCALL(glUseProgram(0));
 }
 
+void Shader::SetUniform1i(const std::string & name, int value)
+{
+	GLCALL(glUniform1i(GetUniformLocation(name), value));
+}
+
 void Shader::SetUniform1f(const std::string & name, float value)
 {
 	GLCALL(glUniform1f(GetUniformLocation(name), value));
